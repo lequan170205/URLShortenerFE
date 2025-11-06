@@ -32,8 +32,11 @@ coverage/
 .eslintcache
 
 # Local env files
-.env.local
+# Environment files
+.env
 .env.*.local
+.env.local
+
 
 # Lock files (optional — chỉ ignore nếu bạn không commit lock)
 # package-lock.json
