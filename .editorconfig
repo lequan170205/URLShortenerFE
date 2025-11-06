@@ -1,8 +1,38 @@
-[*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,vue,css,scss,sass,less,styl}]
+# Root EditorConfig file
+root = true
+
+# Default settings for all files
+[*]
 charset = utf-8
-indent_size = 2
-indent_style = space
+end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
-end_of_line = lf
+indent_style = space
+indent_size = 2
 max_line_length = 100
+
+# Vue, JS, TS, CSS, etc.
+[*.{js,jsx,ts,tsx,vue,css,scss,sass,less,styl,mjs,cjs,mts,cts}]
+indent_size = 2
+indent_style = space
+
+# HTML, JSON, YAML — thống nhất 2 space
+[*.{html,json,yml,yaml}]
+indent_size = 2
+indent_style = space
+
+# Markdown — không trim whitespace, để tránh phá format
+[*.md]
+trim_trailing_whitespace = false
+insert_final_newline = true
+
+# Env files
+[.env*]
+insert_final_newline = false
+trim_trailing_whitespace = false
+end_of_line = lf
+
+# Package files — tránh thay đổi ngoài ý muốn
+[package.json]
+indent_size = 2
+indent_style = space
