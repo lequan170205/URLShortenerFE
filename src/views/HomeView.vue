@@ -1,29 +1,16 @@
 <!-- src/views/HomeView.vue -->
 <template>
   <!-- FULL SCREEN LAYOUT -->
-  <div class="flex justify-center flex-col mx-auto">
-    <!-- HEADER: Sign In / Sign Up -->
-    <header class="p-4 sm:p-6 flex justify-end space-x-3 sm:space-x-4 z-10">
-      <button
-        @click="goToSignIn"
-        class="text-blue-600 dark:text-blue-400 hover:underline font-medium text-sm sm:text-base transition"
-      >
-        Sign In
-      </button>
-      <button
-        @click="goToSignUp"
-        class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-full font-medium text-sm sm:text-base transition shadow-lg"
-      >
-        Sign Up
-      </button>
-    </header>
+  <div class="flex justify-center flex-col mx-auto w-full">
+    <!-- SỬ DỤNG COMPONENT HEADER -->
+    <AppHeader />
 
     <!-- MAIN: Chiếm toàn bộ không gian còn lại -->
     <main class="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <div
         class="w-full h-full flex flex-col items-center justify-center space-y-12 max-w-4xl mx-auto"
       >
-        <!-- HERO TITLE: To hơn, nổi bật -->
+        <!-- HERO TITLE -->
         <div class="text-center animate-fade-in">
           <h1
             class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight"
@@ -37,7 +24,7 @@
           </p>
         </div>
 
-        <!-- FORM: Input + Button lớn, full-width trên mobile -->
+        <!-- FORM -->
         <form
           @submit.prevent="handleShorten"
           class="w-full flex flex-col sm:flex-row gap-4 items-center justify-center"
@@ -50,7 +37,7 @@
           <ShortenButton :loading="isLoading" :disabled="!form.url" />
         </form>
 
-        <!-- RESULT: Hiển thị lớn, nổi bật -->
+        <!-- RESULT -->
         <ResultDisplay
           v-if="result"
           :original-url="form.url"
@@ -59,7 +46,7 @@
           class="w-full max-w-3xl mx-auto animate-slide-up"
         />
 
-        <!-- ERROR: To hơn, dễ đọc -->
+        <!-- ERROR -->
         <ErrorAlert :message="error" class="w-full max-w-3xl mx-auto text-lg" />
       </div>
     </main>
@@ -67,23 +54,17 @@
 </template>
 
 <script setup>
+  import AppHeader from '@/components/url-shortener/AppHeader.vue'
   import ErrorAlert from '@/components/url-shortener/ErrorAlert.vue'
   import Input from '@/components/url-shortener/Input.vue'
   import ResultDisplay from '@/components/url-shortener/ResultDisplay.vue'
   import ShortenButton from '@/components/url-shortener/ShortenButton.vue'
   import { reactive, ref } from 'vue'
-  import { useRouter } from 'vue-router'
-
-  const router = useRouter()
 
   const form = reactive({ url: '' })
   const isLoading = ref(false)
   const result = ref(null)
   const error = ref('')
-
-  // Navigation
-  const goToSignIn = () => router.push('/login')
-  const goToSignUp = () => router.push('/register')
 
   // Shorten URL
   const handleShorten = async () => {
@@ -101,7 +82,6 @@
     result.value = null
 
     try {
-      // Giả lập loading
       await new Promise(resolve => setTimeout(resolve, 1500))
 
       const response = await fetch(
@@ -134,7 +114,6 @@
 </script>
 
 <style scoped>
-  /* Hiệu ứng mượt mà */
   .animate-fade-in {
     animation: fadeIn 1s ease-out;
   }
@@ -150,7 +129,7 @@
     }
     to {
       opacity: 1;
-      transform: translateY(0);
+      transform: translatey(0);
     }
   }
 

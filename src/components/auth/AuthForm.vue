@@ -6,7 +6,7 @@
       <div class="flex justify-center">
         <Button
           type="submit"
-          class="w-64 rounded-xl h-12 text-base font-medium transition-all"
+          class="w-64 rounded-xl h-12 text-base font-medium transition-all cursor-pointer"
           :disabled="isLoading"
         >
           <span v-if="isLoading">{{ submitLoadingText }}</span>

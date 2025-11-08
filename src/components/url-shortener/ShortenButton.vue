@@ -3,7 +3,7 @@
   <button
     type="submit"
     :disabled="disabled"
-    class="w-[200px] h-12 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center"
+    class="w-[200px] h-12 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
   >
     <!-- w-full se khien element con an het width con lai cua component cha -->
     <span v-if="loading">
