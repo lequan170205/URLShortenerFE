@@ -38,34 +38,18 @@
               :disabled="isLoading"
             />
           </div>
-
-          <!-- Remember + Forgot -->
-          <div class="flex items-center justify-between w-full px-6">
-            <a href="#" class="text-sm text-primary hover:underline">Forgot password?</a>
-          </div>
         </template>
       </AuthForm>
-    </template>
-
-    <template #footer>
-      <AuthFooter
-        :isLoading="isLoading"
-        linkText="Don't have an account?"
-        linkLabel="Sign up"
-        linkHref="/register"
-        @google="handleGoogle"
-        @github="handleGithub"
-      />
     </template>
   </AuthLayout>
 </template>
 
 <script setup>
   import { login } from '@/apis/auth'
-  import AuthFooter from '@/components/auth/AuthFooter.vue'
   import AuthForm from '@/components/auth/AuthForm.vue'
   import AuthLayout from '@/components/auth/AuthLayout.vue'
   import Input from '@/components/ui/input/Input.vue'
+  import { useAlertStore } from '@/stores/alertStore'
   import { reactive, ref } from 'vue'
 
   const form = reactive({
@@ -74,29 +58,25 @@
   })
 
   const isLoading = ref(false)
-  const error = ref('')
+  const alertStore = useAlertStore() // <-- sử dụng alertStore
 
   const handleSubmit = async () => {
-    error.value = ''
     isLoading.value = true
     try {
       const response = await login({
         username: form.username,
         password: form.password
       })
-      console.log(response)
 
       if (response.data?.accessToken) {
         localStorage.setItem('accessToken', response.data.accessToken)
+        alertStore.showAlert('Login successful!', 'success') // hiển thị alert thành công
         window.location.href = '/'
       }
     } catch (err) {
-      error.value = err.message || 'Login failed'
+      alertStore.showAlert(err.message || 'Login failed', 'error') // hiển thị alert lỗi
     } finally {
       isLoading.value = false
     }
   }
-
-  const handleGoogle = () => console.log('Google login')
-  const handleGithub = () => console.log('GitHub login')
 </script>

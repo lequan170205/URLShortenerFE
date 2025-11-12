@@ -84,6 +84,7 @@
   import AuthForm from '@/components/auth/AuthForm.vue'
   import AuthLayout from '@/components/auth/AuthLayout.vue'
   import Input from '@/components/ui/input/Input.vue'
+  import { useAlertStore } from '@/stores/alertStore'
   import { reactive, ref } from 'vue'
 
   const form = reactive({
@@ -92,12 +93,12 @@
     password: '',
     confirmPassword: ''
   })
+  const alertStore = useAlertStore()
 
   const isLoading = ref(false)
   const error = ref('')
 
   const handleSubmit = async () => {
-    error.value = ''
     isLoading.value = true
     try {
       if (form.password !== form.confirmPassword) throw new Error('Passwords do not match')
@@ -112,9 +113,11 @@
       if (response.data?.token) {
         localStorage.setItem('accessToken', response.data.token)
       }
+
+      alertStore.showAlert('Registration successful! Check your email for verification.', 'success')
       window.location.href = '/verify-otp?email=' + encodeURIComponent(form.email)
     } catch (err) {
-      error.value = err.message || 'Registration failed'
+      alertStore.showAlert(err.message || 'Registration failed', 'error')
     } finally {
       isLoading.value = false
     }

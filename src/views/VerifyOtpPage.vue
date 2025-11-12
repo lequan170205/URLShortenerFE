@@ -76,7 +76,7 @@
       const response = await verifyEmail({ email, token: otp.value })
       if (response.data.success) {
         alertStore.showAlert('Email verified successfully! Redirecting...', 'success')
-        setTimeout(() => (window.location.href = '/'), 1500)
+        setTimeout(() => (window.location.href = '/login'), 1500)
       }
     } catch (err) {
       alertStore.showAlert(err.response?.data?.message || 'Invalid verification code', 'error')
