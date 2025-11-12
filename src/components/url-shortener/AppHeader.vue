@@ -32,19 +32,9 @@
   }
 
   onMounted(() => {
-    // 1️⃣ Kiểm tra localStorage trước
-    const storedUser = localStorage.getItem('user')
-    if (storedUser) {
-      try {
-        user.value = JSON.parse(storedUser)
-        return
-      } catch {
-        localStorage.removeItem('user')
-      }
-    }
-
     // 2️⃣ Nếu không có user, decode accessToken
     const token = localStorage.getItem('accessToken')
+
     if (token) {
       try {
         const decoded = jwtDecode(token)
@@ -54,7 +44,6 @@
           handleLogout()
         } else {
           // Lấy name, email, role từ token
-          console.log()
 
           const userData = {
             name: decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || 'User',

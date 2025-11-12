@@ -1,9 +1,6 @@
 <!-- src/components/url-shortener/Input.vue -->
 <template>
-  <div class="flex justify-center">
-    <label for="url" class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-      Input the URL
-    </label>
+  <div class="flex justify-center w-full">
     <input
       id="url"
       v-model="localValue"

@@ -27,7 +27,7 @@
         <!-- FORM -->
         <form
           @submit.prevent="handleShorten"
-          class="w-full flex flex-col sm:flex-row gap-4 items-center justify-center"
+          class="w-full flex flex-col gap-4 items-center justify-center"
         >
           <Input
             v-model="form.url"
@@ -42,28 +42,31 @@
           v-if="result"
           :original-url="form.url"
           :short-url="result.shortUrl"
-          @copy="copyToClipboard"
+          @copy="handleCopyEvent"
           class="w-full max-w-3xl mx-auto animate-slide-up"
         />
 
-        <!-- ERROR -->
-        <ErrorAlert :message="error" class="w-full max-w-3xl mx-auto text-lg" />
+        <div v-if="result" class="mt-6 flex justify-center animate-slide-up">
+          <QrcodeVue :value="result.shortUrl" :size="200" level="H" bgColor="#fff" fgColor="#000" />
+        </div>
       </div>
     </main>
   </div>
 </template>
 
 <script setup>
+  import { createShortUrl } from '@/apis/shortener'
   import AppHeader from '@/components/url-shortener/AppHeader.vue'
-  import ErrorAlert from '@/components/url-shortener/ErrorAlert.vue'
   import Input from '@/components/url-shortener/Input.vue'
   import ResultDisplay from '@/components/url-shortener/ResultDisplay.vue'
   import ShortenButton from '@/components/url-shortener/ShortenButton.vue'
+  import QrcodeVue from 'qrcode.vue'
   import { reactive, ref } from 'vue'
 
   const form = reactive({ url: '' })
   const isLoading = ref(false)
   const result = ref(null)
+  const copyStatus = ref('')
   const error = ref('')
 
   // Shorten URL
@@ -82,33 +85,30 @@
     result.value = null
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500))
-
-      const response = await fetch(
-        `https://tinyurl.com/api-create.php?url=${encodeURIComponent(form.url)}`
-      )
-
-      if (!response.ok) throw new Error('Lỗi khi rút gọn URL')
-
-      const shortUrl = await response.text()
-      result.value = { shortUrl }
+      const response = await createShortUrl({ originalUrl: form.url })
+      result.value = { shortUrl: response.data.shortUrl }
     } catch (err) {
-      error.value = err.message || 'Có lỗi xảy ra khi rút gọn URL. Thử lại sau!'
+      error.value =
+        err.response?.data?.message || err.message || 'Có lỗi xảy ra khi rút gọn URL. Thử lại sau!'
     } finally {
       isLoading.value = false
     }
+  }
+
+  const handleCopyEvent = text => {
+    copyStatus.value = `Copied: ${text}`
+    setTimeout(() => {
+      copyStatus.value = ''
+    }, 2000)
   }
 
   // Copy to clipboard
   const copyToClipboard = async text => {
     try {
       await navigator.clipboard.writeText(text)
-      error.value = `Đã sao chép: ${text}`
-      setTimeout(() => {
-        error.value = ''
-      }, 2000)
     } catch (err) {
       console.error('Copy failed:', err)
+      error.value = 'Sao chép thất bại!'
     }
   }
 </script>
