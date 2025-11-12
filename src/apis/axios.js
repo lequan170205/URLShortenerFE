@@ -2,7 +2,7 @@
 import axios from 'axios'
 
 const apiClient = axios.create({
-  baseURL: 'https://api.example.com',
+  baseURL: 'https://api.url-shortener.site',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'

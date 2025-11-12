@@ -12,12 +12,12 @@
         <template #fields>
           <!-- Name -->
           <div class="space-y-2 px-6">
-            <Label class="flex items-center justify-between" for="name">Full name</Label>
+            <Label class="flex items-center justify-between" for="name">User name</Label>
             <Input
               class="h-11 w-full rounded-xl border border-input bg-background px-4 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-all"
-              v-model="form.name"
+              v-model="form.userName"
               type="text"
-              placeholder="Your full name"
+              placeholder="Your user name"
               required
               :disabled="isLoading"
             />
@@ -61,23 +61,6 @@
               :disabled="isLoading"
             />
           </div>
-
-          <!-- Terms -->
-          <div class="flex items-center space-x-2 px-6">
-            <input
-              type="checkbox"
-              id="terms"
-              v-model="form.terms"
-              required
-              class="w-4 h-4 rounded border-2 border-gray-300 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 cursor-pointer"
-            />
-            <Label for="terms" class="text-sm font-normal cursor-pointer select-none">
-              I agree to the
-              <a href="#" class="text-primary hover:underline">Terms of Service</a>
-              and
-              <a href="#" class="text-primary hover:underline">Privacy Policy</a>
-            </Label>
-          </div>
         </template>
       </AuthForm>
     </template>
@@ -96,17 +79,18 @@
 </template>
 
 <script setup>
+  import { register } from '@/apis/auth'
   import AuthFooter from '@/components/auth/AuthFooter.vue'
   import AuthForm from '@/components/auth/AuthForm.vue'
   import AuthLayout from '@/components/auth/AuthLayout.vue'
+  import Input from '@/components/ui/input/Input.vue'
   import { reactive, ref } from 'vue'
 
   const form = reactive({
-    name: '',
+    userName: '',
     email: '',
     password: '',
-    confirmPassword: '',
-    terms: false
+    confirmPassword: ''
   })
 
   const isLoading = ref(false)
@@ -119,8 +103,16 @@
       if (form.password !== form.confirmPassword) throw new Error('Passwords do not match')
       if (form.password.length < 6) throw new Error('Password must be at least 6 characters')
 
-      await new Promise(r => setTimeout(r, 1500))
-      console.log('Register:', form)
+      const response = await register({
+        username: form.userName,
+        password: form.password,
+        email: form.email
+      })
+
+      if (response.data?.token) {
+        localStorage.setItem('token', response.data.token)
+      }
+      window.location.href = '/verify-otp?email=' + encodeURIComponent(form.email)
     } catch (err) {
       error.value = err.message || 'Registration failed'
     } finally {

@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-  <div>
+  <div class="w-full">
     <header>
       <div></div>
     </header>
