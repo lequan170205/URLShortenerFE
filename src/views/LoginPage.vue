@@ -41,11 +41,20 @@
         </template>
       </AuthForm>
     </template>
+    <template #footer>
+      <AuthFooter
+        :isLoading="isLoading"
+        linkText="Don't have an account?"
+        linkLabel="Sign up"
+        linkHref="/register"
+      />
+    </template>
   </AuthLayout>
 </template>
 
 <script setup>
   import { login } from '@/apis/auth'
+  import AuthFooter from '@/components/auth/AuthFooter.vue'
   import AuthForm from '@/components/auth/AuthForm.vue'
   import AuthLayout from '@/components/auth/AuthLayout.vue'
   import Input from '@/components/ui/input/Input.vue'
