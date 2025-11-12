@@ -9,13 +9,19 @@ const apiClient = axios.create({
   }
 })
 
-// Thêm interceptor nếu muốn tự động thêm token
-apiClient.interceptors.request.use(config => {
-  const token = localStorage.getItem('token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
+// Interceptor thêm token vào mọi request
+apiClient.interceptors.request.use(
+  config => {
+    // Lấy accessToken từ localStorage
+    const accessToken = localStorage.getItem('accessToken') // tên key phải đúng
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`
+    }
+    return config
+  },
+  error => {
+    return Promise.reject(error)
   }
-  return config
-})
+)
 
 export default apiClient

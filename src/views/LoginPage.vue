@@ -85,8 +85,9 @@
       })
       console.log(response)
 
-      if (response.data?.token) {
-        localStorage.setItem('token', response.data.token)
+      if (response.data?.accessToken) {
+        localStorage.setItem('accessToken', response.data.accessToken)
+        window.location.href = '/'
       }
     } catch (err) {
       error.value = err.message || 'Login failed'
