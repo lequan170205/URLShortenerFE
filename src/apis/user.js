@@ -1,5 +1,23 @@
 import apiClient from './axios'
 
-export const getUser = id => apiClient.get(`/users/${id}`)
-export const createUser = data => apiClient.post('/users', data)
-export const updateUser = (id, data) => apiClient.put(`/users/${id}`, data)
+export const getUser = () => {
+  return apiClient.get(`/admin/dashboard/users/`)
+}
+
+export const deleteUser = id => {
+  return apiClient.delete(`/admin/dashboard/users/${id}`)
+}
+
+export const getUrl = () => {
+  return apiClient.get(`/url`)
+}
+
+export const deleteUrl = id => {
+  return apiClient.delete(`/url/${id}`)
+}
+export default {
+  getUser,
+  deleteUser,
+  getUrl,
+  deleteUrl
+}
