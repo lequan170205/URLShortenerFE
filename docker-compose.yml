@@ -1,0 +1,7 @@
+version: '3'
+services:
+  vue3-app:
+    build: .
+    ports:
+      - "4949:80"
+    container_name: vue3-app
