@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-  import { verifyEmail } from '@/apis/auth'
+  import { resendOtp, verifyEmail } from '@/apis/auth'
   import { ref } from 'vue'
   import { useRoute } from 'vue-router'
 
@@ -60,6 +60,7 @@
 
   const route = useRoute()
   const email = route.query.email || ''
+  const userName = route.query.userName || ''
   const otp = ref('')
   const isLoading = ref(false)
   const resending = ref(false)
@@ -76,7 +77,7 @@
       const response = await verifyEmail({ email, token: otp.value })
       if (response.data.success) {
         alertStore.showAlert('Email verified successfully! Redirecting...', 'success')
-        setTimeout(() => (window.location.href = '/login'), 1500)
+        window.location.href = '/login'
       }
     } catch (err) {
       alertStore.showAlert(err.response?.data?.message || 'Invalid verification code', 'error')
@@ -91,8 +92,16 @@
     resending.value = true
 
     try {
+      console.log(email, userName, 'qferf')
+
       // Gọi API resend nếu bạn có
       // await resendOtp(email)
+      const response = await resendOtp({
+        email: email,
+        username: userName
+      })
+      console.log(response)
+
       alertStore.showAlert('Verification code resent successfully!', 'success')
     } catch {
       alertStore.showAlert('Failed to resend code. Please try again.', 'error')

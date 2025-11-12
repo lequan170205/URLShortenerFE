@@ -33,6 +33,9 @@ export const refreshToken = data => {
   return apiClient.post('/auth/refresh', data)
 }
 
+export const resendOtp = data => {
+  return apiClient.post('/auth/resend-verification', data)
+}
 /**
  * Đăng xuất
  * @param {Object} data - { token } hoặc { refreshToken } tùy backend yêu cầu

@@ -115,7 +115,7 @@
       }
 
       alertStore.showAlert('Registration successful! Check your email for verification.', 'success')
-      window.location.href = '/verify-otp?email=' + encodeURIComponent(form.email)
+      window.location.href = `/verify-otp?email=${encodeURIComponent(form.email)}&userName=${encodeURIComponent(form.userName)}`
     } catch (err) {
       alertStore.showAlert(err.message || 'Registration failed', 'error')
     } finally {
