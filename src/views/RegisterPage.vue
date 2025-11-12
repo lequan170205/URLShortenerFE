@@ -110,7 +110,7 @@
       })
 
       if (response.data?.token) {
-        localStorage.setItem('token', response.data.token)
+        localStorage.setItem('accessToken', response.data.token)
       }
       window.location.href = '/verify-otp?email=' + encodeURIComponent(form.email)
     } catch (err) {

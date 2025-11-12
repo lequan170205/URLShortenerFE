@@ -15,10 +15,11 @@
         <template #fields>
           <!-- Email -->
           <div class="space-y-2 px-6">
-            <Label class="flex items-center" for="email">Email</Label>
+            <Label class="flex items-center" for="email">Username</Label>
             <Input
               class="h-11 w-full rounded-xl border border-input bg-background px-4 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-all"
               v-model="form.username"
+              placeholder="Username"
               required
               :disabled="isLoading"
             />

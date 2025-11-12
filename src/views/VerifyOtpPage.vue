@@ -41,23 +41,6 @@
         </button>
       </div>
     </template>
-
-    <!-- ✅ Alert Dialog Popup -->
-    <AlertDialog :open="showAlert" @update:open="showAlert = $event">
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>
-            {{ alertType === 'success' ? 'Success' : 'Error' }}
-          </AlertDialogTitle>
-          <AlertDialogDescription>
-            {{ alertMessage }}
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogAction @click="showAlert = false">OK</AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
   </AuthLayout>
 </template>
 
@@ -72,48 +55,31 @@
   import Input from '@/components/ui/input/Input.vue'
   import Label from '@/components/ui/label/Label.vue'
 
-  // ✅ ShadCN AlertDialog imports
-  import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle
-  } from '@/components/ui/alert-dialog'
+  // Global alert store
+  import { useAlertStore } from '@/stores/alertStore'
 
-  // --- States ---
   const route = useRoute()
   const email = route.query.email || ''
   const otp = ref('')
   const isLoading = ref(false)
   const resending = ref(false)
   const error = ref('')
-  const showAlert = ref(false)
-  const alertType = ref('')
-  const alertMessage = ref('')
+
+  const alertStore = useAlertStore()
 
   // --- Handle OTP Submit ---
   const handleSubmit = async () => {
     error.value = ''
     isLoading.value = true
-    showAlert.value = false
 
     try {
       const response = await verifyEmail({ email, token: otp.value })
       if (response.data.success) {
-        alertType.value = 'success'
-        alertMessage.value = 'Email verified successfully! Redirecting...'
-        showAlert.value = true
-        setTimeout(() => {
-          window.location.href = '/'
-        }, 1500)
+        alertStore.showAlert('Email verified successfully! Redirecting...', 'success')
+        setTimeout(() => (window.location.href = '/'), 1500)
       }
     } catch (err) {
-      alertType.value = 'error'
-      alertMessage.value = err.response?.data?.message || 'Invalid verification code'
-      showAlert.value = true
+      alertStore.showAlert(err.response?.data?.message || 'Invalid verification code', 'error')
     } finally {
       isLoading.value = false
     }
@@ -123,15 +89,13 @@
   const handleResend = async () => {
     if (!email) return
     resending.value = true
-    showAlert.value = false
+
     try {
-      alertType.value = 'success'
-      alertMessage.value = 'Verification code resent successfully!'
-      showAlert.value = true
+      // Gọi API resend nếu bạn có
+      // await resendOtp(email)
+      alertStore.showAlert('Verification code resent successfully!', 'success')
     } catch {
-      alertType.value = 'error'
-      alertMessage.value = 'Failed to resend code. Please try again.'
-      showAlert.value = true
+      alertStore.showAlert('Failed to resend code. Please try again.', 'error')
     } finally {
       resending.value = false
     }

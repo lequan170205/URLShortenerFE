@@ -1,11 +1,10 @@
-<!-- src/components/AppHeader.vue -->
 <template>
   <header class="p-4 sm:p-6 flex justify-end items-center space-x-4 z-10">
     <!-- Nếu đã đăng nhập -->
-    <div v-if="isLoggedIn" class="flex items-center space-x-3 sm:space-x-4">
+    <div v-if="user" class="flex items-center space-x-3 sm:space-x-4">
       <span class="text-gray-700 dark:text-gray-300 font-medium text-sm sm:text-base">
         Welcome,
-        <span class="font-bold">{{ userName }}</span>
+        <span class="font-bold">{{ user.name }}</span>
       </span>
       <button
         @click="handleLogout"
@@ -14,59 +13,61 @@
         Log out
       </button>
     </div>
-
-    <!-- Nếu chưa đăng nhập -->
-    <div v-else class="flex space-x-3 sm:space-x-4">
-      <button
-        @click="goToSignIn"
-        class="text-blue-600 dark:text-blue-400 hover:underline font-medium text-sm sm:text-base transition"
-      >
-        Sign In
-      </button>
-      <button
-        @click="goToSignUp"
-        class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-full font-medium text-sm sm:text-base transition shadow-lg"
-      >
-        Sign Up
-      </button>
-    </div>
   </header>
 </template>
 
 <script setup>
-  import { computed, onMounted, ref } from 'vue'
+  import { jwtDecode } from 'jwt-decode'
+  import { onMounted, ref } from 'vue'
   import { useRouter } from 'vue-router'
 
-  // Router
   const router = useRouter()
-
-  // Trạng thái người dùng
   const user = ref(null)
-  const isLoggedIn = computed(() => !!user.value)
-  const userName = computed(() => user.value?.name || 'User')
 
-  // Navigation
-  const goToSignIn = () => router.push('/login')
-  const goToSignUp = () => router.push('/register')
-
-  // Xử lý đăng xuất
   const handleLogout = () => {
-    // Xóa dữ liệu đăng nhập (tùy cách bạn lưu: localStorage, cookie, store, v.v.)
+    localStorage.removeItem('accessToken')
     localStorage.removeItem('user')
-    localStorage.removeItem('token') // nếu dùng token
-
     user.value = null
-    router.push('/')
+    router.push('/login')
   }
 
-  // Kiểm tra đăng nhập khi component mount
   onMounted(() => {
+    // 1️⃣ Kiểm tra localStorage trước
     const storedUser = localStorage.getItem('user')
     if (storedUser) {
       try {
         user.value = JSON.parse(storedUser)
+        return
       } catch {
-        user.value = null
+        localStorage.removeItem('user')
+      }
+    }
+
+    // 2️⃣ Nếu không có user, decode accessToken
+    const token = localStorage.getItem('accessToken')
+    if (token) {
+      try {
+        const decoded = jwtDecode(token)
+        const currentTime = Math.floor(Date.now() / 1000)
+
+        if (decoded.exp && decoded.exp < currentTime) {
+          handleLogout()
+        } else {
+          // Lấy name, email, role từ token
+          console.log()
+
+          const userData = {
+            name: decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || 'User',
+            email:
+              decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] || '',
+            role: decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || ''
+          }
+
+          user.value = userData
+          localStorage.setItem('user', JSON.stringify(userData))
+        }
+      } catch {
+        handleLogout()
       }
     }
   })
