@@ -23,18 +23,6 @@
         </p>
       </div>
 
-      <div class="space-y-2">
-        <a
-          :href="originalUrl"
-          target="_blank"
-          rel="noopener noreferrer"
-          style="padding: 10px"
-          class="inline-flex items-center gap-4 bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 rounded-lg font-medium transition-all shadow-sm hover:shadow-md"
-        >
-          Cannot redirect ?
-        </a>
-      </div>
-
       <!-- Button -->
       <button
         @click="goHome"
@@ -56,12 +44,11 @@
 
 <script setup>
   import { getoriginalUrl } from '@/apis/shortener'
-  import { onMounted, ref } from 'vue'
+  import { onMounted } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
 
   const router = useRouter()
   const route = useRoute()
-  const originalUrl = ref(null)
 
   const goHome = () => router.push({ name: 'home' })
 
@@ -72,12 +59,10 @@
 
     try {
       const res = await getoriginalUrl(code)
-      console.log(res)
-      const { originalUrl: url, isActive } = res.data
+      const { originalUrl, isActive } = res.data
 
       if (isActive && originalUrl) {
-        originalUrl.value = url
-        window.location.href = url
+        window.location.href = originalUrl
       }
     } catch (err) {
       console.error('Failed to fetch original URL', err)
